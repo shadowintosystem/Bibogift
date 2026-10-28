@@ -1,0 +1,149 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Habiba ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Cairo:wght@700;800&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    background: radial-gradient(circle, #350019, #100008);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+h2 {
+    color: #ff8bb6;
+    font-family: Amiri, serif;
+    text-shadow: 0 0 20px #ff0055;
+    font-size: 28px;
+}
+
+canvas {
+    width: min(100vw, 850px);
+    height: min(82vh, 700px);
+}
+</style>
+</head>
+
+<body>
+
+<h2>❤️ إلى حبيبة ❤️</h2>
+<canvas id="heart"></canvas>
+
+<script>
+const canvas = document.getElementById("heart");
+const ctx = canvas.getContext("2d");
+
+const W = 850, H = 700;
+canvas.width = W;
+canvas.height = H;
+
+const phrases = [
+    "بحبك",
+    "I Love You",
+    "Je t'aime",
+    "Te Amo",
+    "Ti Amo",
+    "愛してる",
+    "사랑해",
+    "أحبك",
+    "Seni Seviyorum",
+    "Я тебя люблю",
+    "Eu te amo",
+    "Ich Liebe Dich"
+];
+
+const colors = [
+    "#ff477e",
+    "#ff8db5",
+    "#ffc0d5",
+    "#ffffff"
+];
+
+function insideHeart(x,y) {
+    const a = x*x + y*y - 1;
+    return a*a*a - x*x*y*y*y <= 0;
+}
+
+let words = [];
+
+function createHeart() {
+    const scale = 290;
+    const cell = 23;
+
+    for (let y = -1.12; y <= 1.12; y += cell/scale) {
+        for (let x = -1.2; x <= 1.2; x += cell/scale) {
+
+            if (!insideHeart(x,y)) continue;
+
+            const px = W/2 + x*scale;
+            const py = H/2 - y*scale;
+
+            words.push({
+                x: px,
+                y: py,
+                text: phrases[Math.floor(Math.random()*phrases.length)],
+                color: colors[Math.floor(Math.random()*colors.length)]
+            });
+        }
+    }
+
+    // ترتيب الكلمات من الأعلى للأسفل
+    words.sort((a,b) => a.y-b.y);
+}
+
+createHeart();
+
+let current = 0;
+
+function animate() {
+    ctx.clearRect(0,0,W,H);
+
+    for (let i=0; i<current; i++) {
+        const w = words[i];
+
+        ctx.save();
+        ctx.font = "bold 13px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.shadowColor = w.color;
+        ctx.shadowBlur = 7;
+        ctx.fillStyle = w.color;
+        ctx.fillText(w.text,w.x,w.y);
+        ctx.restore();
+    }
+
+    // اسم حبيبة بلون مختلف
+    ctx.save();
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.font = "bold 85px Amiri, serif";
+    ctx.shadowColor = "#ffb52e";
+    ctx.shadowBlur = 30;
+    ctx.fillStyle = "#ffd166";
+    ctx.fillText("حبيبة", W/2, H/2);
+    ctx.restore();
+
+    if(current < words.length) {
+        current = Math.min(current+8,words.length);
+    }
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
